@@ -1,7 +1,5 @@
-// App.jsx
 import React, { useState } from "react";
-import "./App.css";
-import "./style.css"
+import "./styles.css";
 
 const LINES = [
   [0, 1, 2],
@@ -14,15 +12,16 @@ const LINES = [
   [2, 4, 6],
 ];
 
+// Correct winner logic — only returns line if all 3 match
 function calculateWinner(squares) {
-  for (let line of LINES) {
-    const [a, b, c] = line;
+  debugger;
+  for (let [a, b, c] of LINES) {
     if (
       squares[a] &&
       squares[a] === squares[b] &&
       squares[a] === squares[c]
     ) {
-      return { winner: squares[a], line };
+      return { winner: squares[a], line: [a, b, c] };
     }
   }
   return { winner: null, line: [] };
@@ -31,9 +30,11 @@ function calculateWinner(squares) {
 function Square({ value, onClick, isWinning }) {
   return (
     <button
-      className={`square ${isWinning ? "square-winning" : ""} ${
-        value === "X" ? "square-x" : value === "O" ? "square-o" : ""
-      }`}
+      className={`square 
+        ${value === "X" ? "square-x" : ""} 
+        ${value === "O" ? "square-o" : ""} 
+        ${isWinning ? "square-winning" : ""}
+      `}
       onClick={onClick}
     >
       {value}
@@ -41,7 +42,29 @@ function Square({ value, onClick, isWinning }) {
   );
 }
 
-function Board({ squares, onSquareClick, winningLine }) {
+// Maps winning line to CSS class
+function getLineClass(line) {
+  debugger;
+  const [a, , c] = line;
+
+  // Rows
+  if (a === 0 && c === 2) return "row-top";
+  if (a === 3 && c === 5) return "row-middle";
+  if (a === 6 && c === 8) return "row-bottom";
+
+  // Columns
+  if (a === 0 && c === 6) return "col-left";
+  if (a === 1 && c === 7) return "col-middle";
+  if (a === 2 && c === 8) return "col-right";
+
+  // Diagonals
+  if (a === 0 && c === 8) return "diag-anti";
+  if (a === 2 && c === 6) return "diag-main";
+
+  return "";
+}
+
+function Board({ squares, onSquareClick, winningLine, winner }) {
   return (
     <div className="board">
       {squares.map((val, idx) => (
@@ -52,40 +75,28 @@ function Board({ squares, onSquareClick, winningLine }) {
           isWinning={winningLine.includes(idx)}
         />
       ))}
-      {winningLine.length > 0 && (
+
+      {/* Only draw red line if winner exists */}
+      {winner && winningLine.length === 3 && (
         <div className={`win-line win-line-${getLineClass(winningLine)}`} />
       )}
     </div>
   );
 }
 
-function getLineClass(line) {
-  const [a, , c] = line;
-  // rows
-  if (line[0] === 0 && line[2] === 2) return "row-top";
-  if (line[0] === 3 && line[2] === 5) return "row-middle";
-  if (line[0] === 6 && line[2] === 8) return "row-bottom";
-  // cols
-  if (line[0] === 0 && line[2] === 6) return "col-left";
-  if (line[0] === 1 && line[2] === 7) return "col-middle";
-  if (line[0] === 2 && line[2] === 8) return "col-right";
-  // diagonals
-  if (a === 0 && c === 8) return "diag-main";
-  if (a === 2 && c === 6) return "diag-anti";
-  return "";
-}
-
 export default function App() {
   const [squares, setSquares] = useState(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
 
-  const { winner, line } = calculateWinner(squares);
+  const { winner, line: winningLine } = calculateWinner(squares);
   const isDraw = !winner && squares.every(Boolean);
 
   function handleSquareClick(i) {
     if (squares[i] || winner) return;
+
     const next = squares.slice();
     next[i] = isXNext ? "X" : "O";
+
     setSquares(next);
     setIsXNext(!isXNext);
   }
@@ -97,7 +108,7 @@ export default function App() {
 
   const currentPlayer = isXNext ? "X" : "O";
 
-  let status;
+  let status = "";
   if (winner) {
     status = `Player ${winner === "O" ? "1" : "2"} Wins`;
   } else if (isDraw) {
@@ -111,10 +122,10 @@ export default function App() {
       <h1 className="title">Tic-Tac-Toe</h1>
 
       <div className="players">
-        <span className={`player-label ${!isXNext ? "active" : ""}`}>
+        <span className={`player-label ${currentPlayer === "O" ? "active" : ""}`}>
           Player 1 - O
         </span>
-        <span className={`player-label ${isXNext ? "active" : ""}`}>
+        <span className={`player-label ${currentPlayer === "X" ? "active" : ""}`}>
           Player 2 - X
         </span>
       </div>
@@ -122,7 +133,8 @@ export default function App() {
       <Board
         squares={squares}
         onSquareClick={handleSquareClick}
-        winningLine={line}
+        winningLine={winningLine}
+        winner={winner}
       />
 
       <div className="status">{status}</div>
