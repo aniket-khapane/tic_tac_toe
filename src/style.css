@@ -1,0 +1,211 @@
+/* styles.css */
+
+:root {
+  --grid-color: #00c4c7;   /* turquoise lines */
+  --x-color: #ff7a1a;      /* orange X */
+  --o-color: #9e9e9e;      /* gray O */
+  --win-line-color: #ff3b3b; /* red diagonal */
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --accent-color: #0077ff;
+  --border-radius: 8px;
+  --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: #f5f7fb;
+  color: var(--text-color);
+}
+
+.app {
+  max-width: 420px;
+  margin: 40px auto;
+  padding: 24px 24px 32px;
+  background: var(--bg-color);
+  border-radius: 16px;
+  box-shadow: var(--shadow-soft);
+  text-align: center;
+}
+
+.title {
+  margin: 0 0 16px;
+  font-size: 28px;
+  letter-spacing: 0.03em;
+}
+
+.players {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.player-label {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  color: #777;
+}
+
+.player-label.active {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+/* Board */
+
+.board {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin: 0 auto 16px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+/* Grid lines via borders on squares */
+
+.square {
+  background: transparent;
+  border: none;
+  font-size: 56px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  position: relative;
+}
+
+/* Draw turquoise grid lines */
+.square:nth-child(-n + 6) {
+  border-bottom: 4px solid var(--grid-color);
+}
+.square:nth-child(1),
+.square:nth-child(2),
+.square:nth-child(4),
+.square:nth-child(5),
+.square:nth-child(7),
+.square:nth-child(8) {
+  border-right: 4px solid var(--grid-color);
+}
+
+/* X and O colors */
+.square-x {
+  color: var(--x-color);
+}
+
+.square-o {
+  color: var(--o-color);
+}
+
+/* Winning square highlight */
+.square-winning {
+  background: rgba(255, 59, 59, 0.08);
+}
+
+/* Winning line overlay */
+
+.win-line {
+  position: absolute;
+  background: var(--win-line-color);
+  transform-origin: center;
+}
+
+/* Horizontal lines */
+.win-line-row-top,
+.win-line-row-middle,
+.win-line-row-bottom {
+  height: 4px;
+  width: 100%;
+  left: 0;
+}
+
+.win-line-row-top {
+  top: calc(16.66% - 2px);
+}
+.win-line-row-middle {
+  top: calc(50% - 2px);
+}
+.win-line-row-bottom {
+  top: calc(83.33% - 2px);
+}
+
+/* Vertical lines */
+.win-line-col-left,
+.win-line-col-middle,
+.win-line-col-right {
+  width: 4px;
+  height: 100%;
+  top: 0;
+}
+
+.win-line-col-left {
+  left: calc(16.66% - 2px);
+}
+.win-line-col-middle {
+  left: calc(50% - 2px);
+}
+.win-line-col-right {
+  left: calc(83.33% - 2px);
+}
+
+/* Diagonals */
+.win-line-diag-main,
+.win-line-diag-anti {
+  width: 4px;
+  height: 140%;
+  top: -20%;
+  left: calc(50% - 2px);
+}
+
+.win-line-diag-main {
+  transform: rotate(45deg);
+}
+
+.win-line-diag-anti {
+  transform: rotate(-45deg);
+}
+
+/* Status + button */
+
+.status {
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.reset-btn {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: none;
+  background: var(--accent-color);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 119, 255, 0.3);
+  transition: transform 0.08s ease, box-shadow 0.08s ease,
+    background 0.08s ease;
+}
+
+.reset-btn:hover {
+  background: #005fd1;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 119, 255, 0.35);
+}
+
+.reset-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 8px rgba(0, 119, 255, 0.25);
+}
